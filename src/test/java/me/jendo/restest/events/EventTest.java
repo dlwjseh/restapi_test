@@ -75,28 +75,26 @@ public class EventTest {
         );
     }
 
-    @Test
-    public void testOffline() {
+    @ParameterizedTest(name = "{index} => location={0}, isOffline={1}")
+    @MethodSource("testOfflineParamsProvider")
+    public void testOffline(String location, boolean isOffline) {
         // Given
         Event event = Event.builder()
-                .location("강남역 네이버 D2 스타텁 팩토리")
+                .location(location)
                 .build();
 
         // When
         event.update();
 
         // Then
-        assertThat(event.isOffline()).isTrue();
-
-        // Given
-        event = Event.builder()
-                .build();
-
-        // When
-        event.update();
-
-        // Then
-        assertThat(event.isOffline()).isFalse();
+        assertThat(event.isOffline()).isEqualTo(isOffline);
+    }
+    private static Stream<Arguments> testOfflineParamsProvider() {
+        return Stream.of(
+                Arguments.of("강남", true),
+                Arguments.of(null, false),
+                Arguments.of("     ", false)
+        );
     }
 
 }
